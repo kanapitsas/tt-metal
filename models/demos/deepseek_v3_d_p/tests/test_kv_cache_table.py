@@ -812,8 +812,18 @@ def test_glm_kv_cache_table(
 @pytest.mark.parametrize(
     "mesh_device,device_params",
     [
-        pytest.param((2, 4), fabric2d_device_params(), id="fabric2d-2x4"),
-        pytest.param((8, 4), torus_xy_device_params(), id="torus-xy-8x4"),
+        pytest.param(
+            (2, 4),
+            fabric2d_device_params(),
+            marks=pytest.mark.requires_mesh_topology(mesh_shape=(2, 4), topology="mesh-2x4"),
+            id="fabric2d-2x4",
+        ),
+        pytest.param(
+            (8, 4),
+            torus_xy_device_params(),
+            marks=pytest.mark.requires_mesh_topology(mesh_shape=(8, 4), topology="mesh-8x4"),
+            id="torus-xy-8x4",
+        ),
     ],
     indirect=["mesh_device", "device_params"],
 )
