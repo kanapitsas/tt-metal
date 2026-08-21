@@ -21,11 +21,14 @@ import ttnn
 from models.demos.deepseek_v3_d_p.tests.fabric_profiles import torus_x_device_params
 from models.demos.deepseek_v3_d_p.tt.tt_ccl import per_axis_topology
 from models.demos.deepseek_v3_d_p.tt.tt_distributed_rms_norm import TtDistributedRmsNorm
+from models.demos.deepseek_v3_d_p.utils.chunk_config import ISL_TOKENS_PER_CHIP
 from tests.ttnn.utils_for_testing import assert_with_pcc
 
 
 @pytest.mark.parametrize(
-    "isl_per_chip, emb_dim, epsilon, num_links", [(3200, 7168, 1e-6, 1), (4096, 7168, 1e-6, 1)], ids=["3.2K", "4K"]
+    "isl_per_chip, emb_dim, epsilon, num_links",
+    [(ISL_TOKENS_PER_CHIP, 7168, 1e-6, 1)],
+    ids=["isl_5k"],
 )
 @pytest.mark.parametrize(
     "mesh_device, device_params",
@@ -139,7 +142,7 @@ def test_rmsnorm_distributed(mesh_device, device_params, isl_per_chip, emb_dim, 
     logger.debug("PCC test passed!")
 
 
-@pytest.mark.parametrize("isl_per_chip, emb_dim, epsilon", [(3200, 7168, 1e-6), (4096, 7168, 1e-6)], ids=["3.2K", "4K"])
+@pytest.mark.parametrize("isl_per_chip, emb_dim, epsilon", [(ISL_TOKENS_PER_CHIP, 7168, 1e-6)], ids=["isl_5k"])
 def test_rmsnorm_single_chip(device, isl_per_chip, emb_dim, epsilon):
     """
     Test single-chip full dimension RMSNorm against PyTorch reference.

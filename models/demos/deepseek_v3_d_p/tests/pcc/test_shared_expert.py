@@ -20,6 +20,7 @@ from models.demos.deepseek_v3_d_p.reference.tt.moe.expert import TorchExpert
 from models.demos.deepseek_v3_d_p.tests.fabric_profiles import fabric2d_device_params, torus_x_device_params
 from models.demos.deepseek_v3_d_p.tt.moe.tt_shared_expert import TtSharedExpert
 from models.demos.deepseek_v3_d_p.tt.tt_ccl import per_axis_topology
+from models.demos.deepseek_v3_d_p.utils.chunk_config import ISL_TOKENS_PER_CHIP
 from models.tt_transformers.tt.ccl import get_num_links
 from tests.ttnn.utils_for_testing import assert_with_pcc
 
@@ -27,16 +28,15 @@ from tests.ttnn.utils_for_testing import assert_with_pcc
 @pytest.mark.parametrize(
     "seq_len_per_chip, emb_dim, hidden_dim",
     [
-        (4096, 7 * 1024, 2 * 1024),
-        (3200, 7 * 1024, 2 * 1024),
+        (ISL_TOKENS_PER_CHIP, 7 * 1024, 2 * 1024),
         # Kimi-K3: one shared-expert MLP at moe_intermediate_size * num_shared_experts = 3072 * 2.
         # Worth its own case because every prior model has num_shared_experts == 1, so hidden_dim and
         # the shared intermediate coincided and 6144 was never exercised here.
-        (3200, KimiK3Config.EMB_SIZE, KimiK3Config.SHARED_EXPERT_INTERMEDIATE_SIZE),
+        (ISL_TOKENS_PER_CHIP, KimiK3Config.EMB_SIZE, KimiK3Config.SHARED_EXPERT_INTERMEDIATE_SIZE),
     ],
-    # Ids label seq_len_per_chip first, so the K3 case keeps the "3.2K" prefix it shares with the
-    # case above and adds what actually differs (the 6144 shared intermediate).
-    ids=["4K", "3.2K", "3.2K-k3-6144"],
+    # Both rows run the one ISL, so the ids differ only by what actually differs: the K3 case's 6144
+    # shared intermediate.
+    ids=["isl_5k", "isl_5k-k3-6144"],
 )
 @pytest.mark.parametrize(
     "mesh_device, device_params, num_links",
