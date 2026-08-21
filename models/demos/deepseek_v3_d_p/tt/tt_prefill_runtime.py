@@ -31,7 +31,7 @@ class TtPrefillRuntimeConfig:
     mesh_shape: tuple = (32, 4)
     # Chunked prefill streams tokens in chunks of `chunk_size`, with `num_users` independent cache
     # slots (user-major batch). The full cache holds num_users * num_layers slots of max_seq_len each.
-    chunk_size: int = 5 * 1024
+    chunk_size: int = PREFILL_CHUNK_OUTPUT_TOKENS
     num_users: int = 2
     sp_axis: int = 0
     tp_axis: int = 1
