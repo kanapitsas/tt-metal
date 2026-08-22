@@ -57,13 +57,14 @@ _SEQ_LEN_PER_CHIP = ISL_TOKENS_PER_CHIP
 # Capacity factor 5 carries over from K2.6, as in the pcc parametrize.
 _DISPATCH_BUFFER_CAPACITY_FACTOR = 5
 
-# Measured 2026-08-19 on an 8x4 BH galaxy (DDR 16000, 130W), warm forward, 58 programs.
-_EXPECTED_NS = 13_088_659
-# Repeated warm measurements on that box spanned 12.915-13.159 ms (stdev 0.63%, 1.89% peak to
-# peak), so 3% holds the observed run-to-run noise; sub-nominal DDR doubles it to 6% via
-# adjust_margin_for_ddr_speed. The baseline above is one run, so the band sits nearer the top of
-# that spread than the middle -- recentre it if a regression this shallow ever needs catching.
-_MARGIN = 0.03
+# Measured 2026-08-22 on the 14kW BH galaxy bh-glx-110-c04u02 (DDR 16000 nominal, high power),
+# 8x4 TorusXY certified, warm forward. Mean of three runs: 11.920 / 11.538 / 11.833 ms.
+_EXPECTED_NS = 11_763_691
+# Those three span 3.25% peak to peak on this box -- wider than the 1.89% the previous baseline's
+# box showed, and wider than a 3% band can hold, so the margin is 5% rather than 3%. Sub-nominal
+# DDR doubles it via adjust_margin_for_ddr_speed. Tighten it back only alongside a spread
+# measurement that justifies the tighter band.
+_MARGIN = 0.05
 
 # The profiler's default 1s collection deadline is sized for a single block's programs. The MoE
 # forward at 896 experts dispatches far more, and records arrive asynchronously from the receiver
